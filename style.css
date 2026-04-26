@@ -46,6 +46,40 @@ textarea {
   padding: 12px;
   font-size: 15px;
   line-height: 1.4;
+  font-family: Consolas, "Courier New", monospace;
+}
+
+.editor {
+  display: flex;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.line-numbers {
+  min-width: 42px;
+  padding: 12px 8px;
+  border-right: 1px solid #e2e8f0;
+  background: #f8fafc;
+  color: #64748b;
+  text-align: right;
+  white-space: pre;
+  overflow: hidden;
+  user-select: none;
+  font-size: 15px;
+  line-height: 1.4;
+  font-family: Consolas, "Courier New", monospace;
+}
+
+.editor textarea {
+  border: none;
+  border-radius: 0;
+  padding-left: 10px;
+}
+
+.editor textarea:focus {
+  outline: none;
 }
 
 .actions {

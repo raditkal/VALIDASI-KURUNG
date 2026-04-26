@@ -1,4 +1,5 @@
 const inputText = document.getElementById("inputText");
+const lineNumbers = document.getElementById("lineNumbers");
 const validateBtn = document.getElementById("validateBtn");
 const clearBtn = document.getElementById("clearBtn");
 const result = document.getElementById("result");
@@ -131,6 +132,22 @@ function showResult(validation) {
   result.classList.add(validation.valid ? "ok" : "error");
 }
 
+function updateLineNumbers() {
+  const lineCount = inputText.value.split("\n").length;
+  let numbers = "";
+
+  for (let i = 1; i <= lineCount; i += 1) {
+    numbers += `${i}\n`;
+  }
+
+  lineNumbers.textContent = numbers;
+}
+
+inputText.addEventListener("input", updateLineNumbers);
+inputText.addEventListener("scroll", () => {
+  lineNumbers.scrollTop = inputText.scrollTop;
+});
+
 validateBtn.addEventListener("click", () => {
   const text = inputText.value;
   const validation = validateBrackets(text);
@@ -139,7 +156,11 @@ validateBtn.addEventListener("click", () => {
 
 clearBtn.addEventListener("click", () => {
   inputText.value = "";
+  updateLineNumbers();
+  lineNumbers.scrollTop = 0;
   result.textContent = "Hasil validasi akan muncul di sini.";
   result.classList.remove("ok", "error");
   inputText.focus();
 });
+
+updateLineNumbers();

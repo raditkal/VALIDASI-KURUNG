@@ -16,11 +16,14 @@
 
       <section class="card">
         <label for="inputText">Masukkan teks:</label>
-        <textarea
-          id="inputText"
-          rows="8"
-          placeholder="Contoh: if (a[2] > b) { return (x+y); }"
-        ></textarea>
+        <div class="editor">
+          <div id="lineNumbers" class="line-numbers" aria-hidden="true">1</div>
+          <textarea
+            id="inputText"
+            rows="8"
+            placeholder="Contoh: if (a[2] > b) { return (x+y); }"
+          ></textarea>
+        </div>
 
         <div class="actions">
           <button id="validateBtn">Validasi</button>
