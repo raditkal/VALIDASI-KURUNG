@@ -119,6 +119,21 @@ button.secondary:hover {
   white-space: pre-line;
 }
 
+.hidden {
+  display: none;
+}
+
+.error-group {
+  color: #991b1b;
+  border-color: #fca5a5;
+  background: #fef2f2;
+}
+
+.error-group strong {
+  display: block;
+  margin-bottom: 6px;
+}
+
 .ok {
   color: #065f46;
   border-color: #6ee7b7;

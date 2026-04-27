@@ -3,6 +3,10 @@ const lineNumbers = document.getElementById("lineNumbers");
 const validateBtn = document.getElementById("validateBtn");
 const clearBtn = document.getElementById("clearBtn");
 const result = document.getElementById("result");
+const normalErrorBox = document.getElementById("normalErrorBox");
+const mismatchErrorBox = document.getElementById("mismatchErrorBox");
+const normalErrorContent = document.getElementById("normalErrorContent");
+const mismatchErrorContent = document.getElementById("mismatchErrorContent");
 
 const openToClose = {
   "(": ")",
@@ -18,7 +22,8 @@ const closeToOpen = {
 
 function validateBrackets(text) {
   const stack = [];
-  const errors = [];
+  const normalErrors = [];
+  const mismatchErrors = [];
   let line = 1;
   let column = 1;
   let inString = false;
@@ -74,13 +79,13 @@ function validateBrackets(text) {
       });
     } else if (closeToOpen[char]) {
       if (stack.length === 0) {
-        errors.push(
+        normalErrors.push(
           `Ditemukan '${char}' di baris ${currentLine}, kolom ${currentColumn} tanpa pasangan pembuka.`,
         );
       } else {
         const top = stack[stack.length - 1];
         if (top.char !== closeToOpen[char]) {
-          errors.push(
+          mismatchErrors.push(
             `Mismatch di baris ${currentLine}, kolom ${currentColumn}: '${char}' tidak cocok dengan '${top.char}' (dibuka di baris ${top.line}, kolom ${top.column}).`,
           );
           // Pop untuk recovery agar validasi bisa lanjut menemukan error lain.
@@ -101,28 +106,32 @@ function validateBrackets(text) {
 
   while (stack.length > 0) {
     const unclosed = stack.pop();
-    errors.push(
+    normalErrors.push(
       `'${unclosed.char}' yang dibuka di baris ${unclosed.line}, kolom ${unclosed.column} belum ditutup.`,
     );
   }
 
   if (inString) {
-    errors.push(
+    normalErrors.push(
       `String yang dimulai dengan ${stringDelimiter} di baris/kolom tertentu belum ditutup sampai akhir input.`,
     );
   }
 
-  if (errors.length > 0) {
-    const errorList = errors.map((error, index) => `${index + 1}. ${error}`).join("\n");
+  const totalErrors = normalErrors.length + mismatchErrors.length;
+  if (totalErrors > 0) {
     return {
       valid: false,
-      message: `Ditemukan ${errors.length} error:\n${errorList}`,
+      message: `Ditemukan ${totalErrors} error.`,
+      normalErrors,
+      mismatchErrors,
     };
   }
 
   return {
     valid: true,
     message: "Valid: semua tanda kurung seimbang dan berpasangan dengan benar.",
+    normalErrors: [],
+    mismatchErrors: [],
   };
 }
 
@@ -130,6 +139,30 @@ function showResult(validation) {
   result.textContent = validation.message;
   result.classList.remove("ok", "error");
   result.classList.add(validation.valid ? "ok" : "error");
+
+  if (validation.valid) {
+    normalErrorBox.classList.add("hidden");
+    mismatchErrorBox.classList.add("hidden");
+    return;
+  }
+
+  if (validation.normalErrors.length > 0) {
+    normalErrorContent.textContent = validation.normalErrors
+      .map((error, index) => `${index + 1}. ${error}`)
+      .join("\n");
+    normalErrorBox.classList.remove("hidden");
+  } else {
+    normalErrorBox.classList.add("hidden");
+  }
+
+  if (validation.mismatchErrors.length > 0) {
+    mismatchErrorContent.textContent = validation.mismatchErrors
+      .map((error, index) => `${index + 1}. ${error}`)
+      .join("\n");
+    mismatchErrorBox.classList.remove("hidden");
+  } else {
+    mismatchErrorBox.classList.add("hidden");
+  }
 }
 
 function updateLineNumbers() {
@@ -160,6 +193,8 @@ clearBtn.addEventListener("click", () => {
   lineNumbers.scrollTop = 0;
   result.textContent = "Hasil validasi akan muncul di sini.";
   result.classList.remove("ok", "error");
+  normalErrorBox.classList.add("hidden");
+  mismatchErrorBox.classList.add("hidden");
   inputText.focus();
 });
 
